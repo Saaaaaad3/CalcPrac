@@ -1,0 +1,91 @@
+@model CalculatorHistoryPagination
+
+@{
+    ViewBag.Title = "Calculator History";
+    Layout = "_Layout";
+}
+
+<h2 class="my-4">Tax History</h2>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Postal Code</th>
+            <th scope="col">Income</th>
+            <th scope="col">Tax</th>
+            <th scope="col">Calculator</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var history in Model.CalculatorHistory)
+        {
+            <tr>
+                <td>@history.Timestamp</td>
+                <td>@history.PostalCode</td>
+                <td>@history.Income</td>
+                <td>@history.Tax</td>
+                <td>
+                    @if (history.Calculator == 0)
+                    {
+                        @:Progressive
+                    }
+                    else if (history.Calculator == 1)
+                    {
+                        @:Flat Value
+                    }
+                    else if (history.Calculator == 2)
+                    {
+                        @:Flat Rate
+                    }
+                    else
+                    {
+                        @:Unknown
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        @if (Model.CurrentPage > 1)
+        {
+            <a href="@Url.Action("History", new { page = Model.CurrentPage - 1 })" class="btn btn-secondary btn-sm">Previous</a>
+        }
+    </div>
+    <div>
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("History", new { page = 1 })">First</a>
+                    </li>
+                }
+
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("History", new { page = i })">@i</a>
+                    </li>
+                }
+
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("History", new { page = Model.TotalPages })">Last</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
+    <div>
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <a href="@Url.Action("History", new { page = Model.CurrentPage + 1 })" class="btn btn-secondary btn-sm">Next</a>
+        }
+    </div>
+</div>
